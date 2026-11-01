@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>M - RISE HEROES Event Registration</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      header, footer, button, .no-print { display: none !important; }
+      #printable-pass { border: 2px solid #6B0F1A !important; box-shadow: none !important; background: #fff !important; color: #111 !important; margin: 0 auto !important; max-width: 480px !important; }
+    }
+  </style>
+</head>
+<body class="bg-stone-950 text-stone-100 min-h-screen flex flex-col font-sans selection:bg-orange-600 selection:text-white">
+
+  <!-- Top Brand Notification Bar -->
+  <div class="bg-gradient-to-r from-red-950 via-orange-950 to-stone-950 border-b border-amber-900/40 py-1.5 px-4 text-center text-[10px] sm:text-xs font-bold uppercase tracking-widest text-amber-200">
+    ★ M - RISE HEROES CONCLAVE 2026 • OFFICIAL REGISTRATION PORTAL ★
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-stone-950/90 backdrop-blur-md border-b border-amber-900/30 px-4 py-3 shadow-lg">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <!-- SVG Brand Crest -->
+        <div class="w-10 h-10 sm:w-12 sm:h-12 shrink-0 drop-shadow">
+          <svg viewBox="0 0 100 100" fill="none" class="w-full h-full">
+            <path d="M50 4L88 18C88 48 76 78 50 96C24 78 12 48 12 18L50 4Z" fill="#6B0F1A" stroke="#EA580C" stroke-width="3"/>
+            <circle cx="50" cy="42" r="16" fill="#EA580C" opacity="0.3"/>
+            <path d="M26 68L26 34L40 50L35 68H26Z" fill="#FFFDF5"/>
+            <path d="M74 68L74 34L60 50L65 68H74Z" fill="#FFFDF5"/>
+            <path d="M50 28L63 48L50 63L37 48L50 28Z" fill="#F97316"/>
+            <polygon points="50,34 54,44 64,48 54,52 50,62 46,52 36,48 46,44" fill="#FFFDF7"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-xl font-black tracking-tight text-amber-50">
+            M <span class="text-orange-400">-</span> RISE <span class="text-orange-400">HEROES</span>
+          </h1>
+          <p class="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-amber-100/70">
+            Empowering Leaders • Celebrating Heroes
+          </p>
+        </div>
+      </div>
+
+      <a href="?page=admin" class="bg-stone-900 hover:bg-stone-800 text-amber-300 text-xs font-bold px-3 py-1.5 rounded-xl border border-amber-900/40 transition-colors">
+        Admin Portal →
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-2xl w-full mx-auto p-4 sm:p-6 my-4">
+
+    <!-- Screen 1: Registration Form -->
+    <div id="formSection" class="bg-stone-900/90 border border-amber-900/40 rounded-3xl p-5 sm:p-8 shadow-2xl relative overflow-hidden">
+      <!-- Glow effect -->
+      <div class="absolute -top-24 -right-24 w-60 h-60 bg-orange-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Hero Title -->
+      <div class="text-center mb-6 pb-4 border-b border-amber-900/20">
+        <span class="inline-block px-3 py-1 rounded-full bg-orange-950/80 border border-orange-500/30 text-orange-400 text-[11px] font-bold uppercase tracking-wider mb-2">
+          Official Event Portal
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-black text-amber-50">Hero Registration Form</h2>
+        <p class="text-xs text-stone-400 mt-1">
+          Complete attendee details and snap your official badge photo to secure your event credentials.
+        </p>
+      </div>
+
+      <form id="regForm" onsubmit="handleFormSubmit(event)" class="space-y-5">
+        <!-- Date Display -->
+        <div class="flex items-center justify-between bg-stone-950/80 border border-amber-900/30 rounded-xl px-4 py-2 text-xs">
+          <span class="text-stone-400">Registration Date (Auto):</span>
+          <span id="dateDisplay" class="font-semibold text-amber-200"></span>
+        </div>
+
+        <!-- Photo Capture Section -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-amber-300 mb-2">
+            Participant Photo <span class="text-orange-500">*</span>
+          </label>
+
+          <!-- Photo Container -->
+          <div class="bg-stone-950/90 rounded-2xl p-4 border border-amber-900/40 text-center">
+            <!-- Tabs -->
+            <div class="flex justify-center gap-2 mb-3">
+              <button type="button" id="tabCamera" onclick="switchPhotoTab('camera')" class="px-3 py-1 rounded-lg text-xs font-bold bg-orange-600 text-white">
+                Live Camera
+              </button>
+              <button type="button" id="tabUpload" onclick="switchPhotoTab('upload')" class="px-3 py-1 rounded-lg text-xs font-bold bg-stone-800 text-stone-300">
+                Upload File
+              </button>
+            </div>
+
+            <!-- Live Camera Feed / Preview Area -->
+            <div id="mediaBox" class="relative w-64 h-64 mx-auto rounded-2xl overflow-hidden bg-black border-2 border-amber-900/50 flex items-center justify-center">
+              <video id="videoFeed" playsinline autoplay muted class="w-full h-full object-cover hidden"></video>
+              <img id="photoPreview" class="w-full h-full object-cover hidden" alt="Captured Photo">
+              
+              <!-- Oval guide -->
+              <div id="ovalGuide" class="absolute inset-0 pointer-events-none flex items-center justify-center hidden">
+                <div class="w-44 h-52 rounded-[50%] border-2 border-dashed border-orange-400/80"></div>
+              </div>
+
+              <!-- Countdown -->
+              <div id="countdownBox" class="absolute inset-0 bg-black/60 flex items-center justify-center text-6xl font-black text-amber-300 hidden">3</div>
+
+              <!-- Idle Camera Placeholder -->
+              <div id="idleCameraBox" class="p-4 text-center">
+                <p class="text-xs text-stone-300 font-semibold mb-2">Live Photo Credential</p>
+                <button type="button" onclick="startCamera()" class="bg-gradient-to-r from-orange-600 to-amber-600 text-white font-bold text-xs px-4 py-2 rounded-xl shadow">
+                  Open Camera
+                </button>
+              </div>
+
+              <!-- Idle Upload Placeholder -->
+              <div id="idleUploadBox" onclick="document.getElementById('fileInput').click()" class="p-4 text-center cursor-pointer hidden">
+                <p class="text-xs text-stone-300 font-semibold mb-1">Click to Upload Photo</p>
+                <p class="text-[10px] text-stone-500">JPG, PNG, WebP (Max 5MB)</p>
+                <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+              </div>
+            </div>
+
+            <!-- Camera Controls -->
+            <div id="cameraControls" class="mt-3 flex justify-center gap-2 hidden">
+              <button type="button" onclick="switchFacingMode()" class="px-3 py-1.5 rounded-xl bg-stone-800 text-stone-200 text-xs">
+                🔄 Flip Camera
+              </button>
+              <button type="button" onclick="takePhotoWithCountdown()" class="px-5 py-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-stone-950 font-black text-xs shadow">
+                📸 Snap (3s)
+              </button>
+            </div>
+
+            <!-- Post-Capture Controls -->
+            <div id="previewControls" class="mt-3 flex justify-center gap-2 hidden">
+              <button type="button" onclick="retakePhoto()" class="px-4 py-1.5 rounded-xl bg-stone-800 text-stone-200 text-xs font-bold">
+                Retake
+              </button>
+              <button type="button" onclick="confirmPhoto()" class="px-4 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow">
+                ✓ Confirm Photo
+              </button>
+            </div>
+
+            <p id="photoConfirmedBadge" class="mt-2 text-xs text-emerald-400 font-bold hidden">
+              ✓ Photo verified and attached
+            </p>
+          </div>
+        </div>
+
+        <!-- Personal Details -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-amber-200 mb-1">
+            Full Name <span class="text-orange-500">*</span>
+          </label>
+          <input type="text" id="fullName" required placeholder="e.g. Aarav Sharma" class="w-full bg-stone-950 border border-amber-900/30 rounded-xl px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 focus:outline-none focus:border-orange-500">
+        </div>
+
+        <!-- Mobile Number with Duplicate Check -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-amber-200 mb-1">
+            Mobile Number <span class="text-orange-500">*</span>
+          </label>
+          <input type="tel" id="mobile" required placeholder="e.g. 9876543210" onblur="checkMobileDuplicate()" class="w-full bg-stone-950 border border-amber-900/30 rounded-xl px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 focus:outline-none focus:border-orange-500">
+          <p id="mobileError" class="mt-1 text-xs text-rose-400 hidden"></p>
+        </div>
+
+        <!-- District / City -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-amber-200 mb-1">
+            District / City <span class="text-orange-500">*</span>
+          </label>
+          <input type="text" id="district" required placeholder="e.g. Bengaluru Urban, Mumbai, Delhi" class="w-full bg-stone-950 border border-amber-900/30 rounded-xl px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 focus:outline-none focus:border-orange-500">
+        </div>
+
+        <!-- Full Address -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-amber-200 mb-1">
+            Full Address <span class="text-orange-500">*</span>
+          </label>
+          <textarea id="address" rows="2" required placeholder="Door/Flat No, Street, City, PIN Code" class="w-full bg-stone-950 border border-amber-900/30 rounded-xl px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 focus:outline-none focus:border-orange-500"></textarea>
+        </div>
+
+        <!-- Consent Checkbox -->
+        <label class="flex items-start gap-2.5 cursor-pointer bg-stone-950/70 p-3 rounded-xl border border-amber-900/30">
+          <input type="checkbox" id="consent" required class="mt-0.5 rounded text-orange-600 w-4 h-4 accent-orange-600">
+          <span class="text-xs text-stone-300">
+            <strong>Consent:</strong> I consent to capturing and securely storing my photograph in Google Drive for identity credentials at the M - RISE HEROES Conclave 2026.
+          </span>
+        </label>
+
+        <!-- Submit Button -->
+        <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 text-stone-950 font-black text-sm py-3.5 px-4 rounded-xl shadow-lg transition-transform active:scale-98">
+          Submit Event Registration
+        </button>
+      </form>
+    </div>
+
+    <!-- Screen 2: Registration Success & Digital Pass -->
+    <div id="successSection" class="hidden space-y-6">
+      <div class="bg-gradient-to-r from-emerald-950/80 to-teal-950/80 border border-emerald-500/40 rounded-2xl p-4 text-center">
+        <h3 class="text-xl font-black text-emerald-100">Registration Successful!</h3>
+        <p class="text-xs text-emerald-200 mt-1">Saved securely to Google Sheets and Google Drive.</p>
+      </div>
+
+      <!-- Printable Digital Badge -->
+      <div id="printable-pass" class="bg-gradient-to-b from-stone-900 to-stone-950 border-2 border-amber-600/50 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+        <div class="h-2 bg-gradient-to-r from-red-800 via-orange-500 to-amber-400 absolute top-0 inset-x-0"></div>
+
+        <div class="flex items-center justify-between pb-3 border-b border-amber-900/30">
+          <span class="text-lg font-black text-amber-50">M - RISE HEROES</span>
+          <span class="text-[10px] font-mono font-bold bg-orange-950 text-orange-300 px-2 py-0.5 rounded border border-orange-800/40">
+            DELEGATE PASS 2026
+          </span>
+        </div>
+
+        <div class="mt-5 flex flex-col sm:flex-row items-center gap-5">
+          <div class="w-32 h-32 rounded-2xl overflow-hidden border-2 border-amber-500 shadow-xl bg-stone-950 shrink-0">
+            <img id="passPhoto" src="" alt="Badge Photo" class="w-full h-full object-cover">
+          </div>
+
+          <div class="space-y-1.5 text-center sm:text-left flex-1">
+            <span id="passId" class="text-xs font-mono font-bold text-amber-300 bg-stone-950 px-2.5 py-1 rounded inline-block"></span>
+            <h4 id="passName" class="text-xl font-black text-amber-50"></h4>
+            <p id="passDistrict" class="text-xs text-orange-400 font-semibold"></p>
+            <p id="passMobile" class="text-xs font-mono text-stone-300"></p>
+            <p id="passAddress" class="text-xs text-stone-400"></p>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-4 border-t border-amber-900/30 grid grid-cols-2 gap-2 text-[11px] bg-stone-950/60 p-3 rounded-xl">
+          <div>
+            <span class="text-stone-500 block">Date & Venue</span>
+            <strong class="text-amber-100">Nov 14, 2026 • Grand Horizon Arena</strong>
+          </div>
+          <div>
+            <span class="text-stone-500 block">Gate Entry</span>
+            <strong class="text-emerald-400">Gate 3 (Pass Verified)</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="window.print()" class="flex-1 bg-gradient-to-r from-orange-600 to-amber-600 text-stone-950 font-black text-xs py-3 rounded-xl shadow">
+          🖨️ Print / Save Event Pass
+        </button>
+        <button onclick="registerAnother()" class="flex-1 bg-stone-800 text-stone-200 text-xs font-bold py-3 rounded-xl border border-stone-700">
+          + Register Another Hero
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-stone-950 border-t border-amber-900/40 text-stone-500 text-center py-6 text-xs mt-auto">
+    M - RISE HEROES Event System • Powered by Free Google Apps Script, Sheets & Drive
+  </footer>
+
+  <script>
+    // Secure message bridge to Google Apps Script. The iframe page validates the GitHub origin.
+    const backendFrame = document.getElementById('appsScriptBridge');
+    const pendingBackendCalls = new Map();
+    let backendCallCounter = 0;
+
+    window.addEventListener('message', function(event) {
+      if (!backendFrame || event.source !== backendFrame.contentWindow) return;
+      const message = event.data || {};
+      if (message.type !== 'MRH_RESPONSE' || !pendingBackendCalls.has(message.id)) return;
+      const pending = pendingBackendCalls.get(message.id);
+      pendingBackendCalls.delete(message.id);
+      clearTimeout(pending.timer);
+      if (message.error) pending.reject(new Error(message.error));
+      else pending.resolve(message.result);
+    });
+
+    function callBackend(action, ...args) {
+      return new Promise(function(resolve, reject) {
+        if (!backendFrame || !backendFrame.contentWindow) {
+          reject(new Error('Backend frame is not available.')); return;
+        }
+        const id = 'mrh-' + (++backendCallCounter) + '-' + Date.now();
+        const timer = setTimeout(function() {
+          pendingBackendCalls.delete(id);
+          reject(new Error('Backend timed out. Please reload and try again.'));
+        }, 60000);
+        pendingBackendCalls.set(id, { resolve, reject, timer });
+        backendFrame.contentWindow.postMessage({
+          type: 'MRH_REQUEST', id: id, action: action, args: args
+        }, '*');
+      });
+    }
+
+    // State
+    var currentFacingMode = 'user';
+    var stream = null;
+    var photoBase64 = null;
+    var photoSource = 'camera';
+
+    document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', {
+      weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+    });
+
+    function switchPhotoTab(tab) {
+      stopCamera();
+      if (tab === 'camera') {
+        document.getElementById('tabCamera').className = 'px-3 py-1 rounded-lg text-xs font-bold bg-orange-600 text-white';
+        document.getElementById('tabUpload').className = 'px-3 py-1 rounded-lg text-xs font-bold bg-stone-800 text-stone-300';
+        document.getElementById('idleCameraBox').classList.remove('hidden');
+        document.getElementById('idleUploadBox').classList.add('hidden');
+      } else {
+        document.getElementById('tabUpload').className = 'px-3 py-1 rounded-lg text-xs font-bold bg-orange-600 text-white';
+        document.getElementById('tabCamera').className = 'px-3 py-1 rounded-lg text-xs font-bold bg-stone-800 text-stone-300';
+        document.getElementById('idleUploadBox').classList.remove('hidden');
+        document.getElementById('idleCameraBox').classList.add('hidden');
+      }
+    }
+
+    async function startCamera() {
+      try {
+        stopCamera();
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: currentFacingMode, width: { ideal: 1280 } },
+          audio: false
+        });
+        var video = document.getElementById('videoFeed');
+        video.srcObject = stream;
+        video.classList.remove('hidden');
+        document.getElementById('idleCameraBox').classList.add('hidden');
+        document.getElementById('photoPreview').classList.add('hidden');
+        document.getElementById('ovalGuide').classList.remove('hidden');
+        document.getElementById('cameraControls').classList.remove('hidden');
+        document.getElementById('previewControls').classList.add('hidden');
+      } catch (err) {
+        alert('Camera access denied or unavailable. Please use the Upload File tab.');
+        switchPhotoTab('upload');
+      }
+    }
+
+    function stopCamera() {
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+        stream = null;
+      }
+      document.getElementById('videoFeed').classList.add('hidden');
+      document.getElementById('ovalGuide').classList.add('hidden');
+      document.getElementById('cameraControls').classList.add('hidden');
+    }
+
+    function switchFacingMode() {
+      currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+      startCamera();
+    }
+
+    function takePhotoWithCountdown() {
+      var countdown = 3;
+      var box = document.getElementById('countdownBox');
+      box.textContent = countdown;
+      box.classList.remove('hidden');
+
+      var timer = setInterval(function() {
+        countdown--;
+        if (countdown <= 0) {
+          clearInterval(timer);
+          box.classList.add('hidden');
+          captureFrame();
+        } else {
+          box.textContent = countdown;
+        }
+      }, 800);
+    }
+
+    function captureFrame() {
+      var video = document.getElementById('videoFeed');
+      var canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 800;
+      var ctx = canvas.getContext('2d');
+      var size = Math.min(video.videoWidth, video.videoHeight);
+      var sx = (video.videoWidth - size) / 2;
+      var sy = (video.videoHeight - size) / 2;
+
+      if (currentFacingMode === 'user') {
+        ctx.translate(800, 0);
+        ctx.scale(-1, 1);
+      }
+      ctx.drawImage(video, sx, sy, size, size, 0, 0, 800, 800);
+      photoBase64 = canvas.toDataURL('image/jpeg', 0.85);
+      photoSource = 'camera';
+
+      stopCamera();
+      var preview = document.getElementById('photoPreview');
+      preview.src = photoBase64;
+      preview.classList.remove('hidden');
+      document.getElementById('previewControls').classList.remove('hidden');
+    }
+
+    function handleFileSelect(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas');
+          canvas.width = 800;
+          canvas.height = 800;
+          var ctx = canvas.getContext('2d');
+          var minDim = Math.min(img.width, img.height);
+          ctx.drawImage(img, (img.width-minDim)/2, (img.height-minDim)/2, minDim, minDim, 0, 0, 800, 800);
+          photoBase64 = canvas.toDataURL('image/jpeg', 0.85);
+          photoSource = 'upload';
+
+          document.getElementById('idleUploadBox').classList.add('hidden');
+          var preview = document.getElementById('photoPreview');
+          preview.src = photoBase64;
+          preview.classList.remove('hidden');
+          document.getElementById('previewControls').classList.remove('hidden');
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function retakePhoto() {
+      photoBase64 = null;
+      document.getElementById('photoPreview').classList.add('hidden');
+      document.getElementById('previewControls').classList.add('hidden');
+      document.getElementById('photoConfirmedBadge').classList.add('hidden');
+      startCamera();
+    }
+
+    function confirmPhoto() {
+      if (!photoBase64) return;
+      document.getElementById('previewControls').classList.add('hidden');
+      document.getElementById('photoConfirmedBadge').classList.remove('hidden');
+    }
+
+    function checkMobileDuplicate() {
+      var mobile = document.getElementById('mobile').value.replace(/[^0-9]/g, '');
+      if (mobile.length < 8) return;
+
+      callBackend('checkMobileExists', mobile).then(function(res) {
+        var err = document.getElementById('mobileError');
+        if (res && res.exists) {
+          err.textContent = 'Mobile already registered under ' + res.participant.id + ' (' + res.participant.fullName + ')';
+          err.classList.remove('hidden');
+        } else {
+          err.classList.add('hidden');
+        }
+      }).catch(function(error) { console.error('Duplicate check failed:', error); });
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      if (!photoBase64) {
+        alert('Please capture or upload a participant photo.');
+        return;
+      }
+
+      var btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Uploading to Google Sheets & Drive...';
+
+      var payload = {
+        fullName: document.getElementById('fullName').value,
+        mobile: document.getElementById('mobile').value,
+        district: document.getElementById('district').value,
+        address: document.getElementById('address').value,
+        photoUrl: photoBase64,
+        photoSource: photoSource,
+        consentGiven: document.getElementById('consent').checked
+      };
+
+      callBackend('submitRegistration', payload)
+        .then(function(participant) { showSuccess(participant); })
+        .catch(function(err) {
+          btn.disabled = false;
+          btn.textContent = 'Submit Event Registration';
+          alert('Error: ' + err.message);
+        });
+    }
+
+    function showSuccess(p) {
+      document.getElementById('formSection').classList.add('hidden');
+      document.getElementById('successSection').classList.remove('hidden');
+      document.getElementById('passPhoto').src = p.photoUrl;
+      document.getElementById('passId').textContent = p.id;
+      document.getElementById('passName').textContent = p.fullName;
+      document.getElementById('passDistrict').textContent = p.district;
+      document.getElementById('passMobile').textContent = p.mobile;
+      document.getElementById('passAddress').textContent = p.address;
+
+      try {
+        confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+      } catch(e) {}
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function registerAnother() {
+      document.getElementById('regForm').reset();
+      photoBase64 = null;
+      document.getElementById('photoConfirmedBadge').classList.add('hidden');
+      document.getElementById('photoPreview').classList.add('hidden');
+      document.getElementById('successSection').classList.add('hidden');
+      document.getElementById('formSection').classList.remove('hidden');
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('submitBtn').textContent = 'Submit Event Registration';
+      switchPhotoTab('camera');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+
+  <!-- Google Apps Script bridge: replace DEPLOYMENT_ID with your Web App deployment ID -->
+  <iframe id="appsScriptBridge" title="Backend connection" aria-hidden="true"
+    src="https://script.google.com/macros/s/AKfycbzvi-AIvAdUfMC1SkcjlJFEoXWcgp5t4mo1zVJvn_h3QArow7lEt9CBvCsDoVXnns3sbQ/exec?page=bridge"
+    style="display:none;width:0;height:0;border:0"></iframe>
+</body>
+</html>
